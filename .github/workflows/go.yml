@@ -25,7 +25,7 @@ jobs:
       working-directory: ./tpkg
       run: |
         go mod tidy
-        go build -v -o tpkg/bin ./...
+        go build -v -o bin/tpkg ./cmd
 
     - name: Create Release
       id: create_release
