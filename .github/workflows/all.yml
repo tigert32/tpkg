@@ -53,31 +53,39 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      outputs:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
 
     - name: Upload Release Asset (Linux)
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      uses: softprops/action-gh-release@v1
+      uses: actions/upload-release-asset@v1
       with:
-        tag_name: ${{ env.TAG_NAME }}
-        files: ./tpkg/bin/tpkg${{ matrix.ext }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./tpkg/bin/tpkg${{ matrix.ext }}
+        asset_name: tpkg${{ matrix.ext }}
+        asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release Asset (macOS)
       if: ${{ matrix.os == 'macos-latest' }}
-      uses: softprops/action-gh-release@v1
+      uses: actions/upload-release-asset@v1
       with:
-        tag_name: ${{ env.TAG_NAME }}
-        files: ./tpkg/bin/tpkg${{ matrix.ext }}
+        upload_url: ${{ needs.build.outputs.create_release.outputs.upload_url }}
+        asset_path: ./tpkg/bin/tpkg${{ matrix.ext }}
+        asset_name: tpkg${{ matrix.ext }}
+        asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release Asset (Windows)
       if: ${{ matrix.os == 'windows-latest' }}
-      uses: softprops/action-gh-release@v1
+      uses: actions/upload-release-asset@v1
       with:
-        tag_name: ${{ env.TAG_NAME }}
-        files: ./tpkg/bin/tpkg${{ matrix.ext }}
+        upload_url: ${{ needs.build.outputs.create_release.outputs.upload_url }}
+        asset_path: ./tpkg/bin/tpkg${{ matrix.ext }}
+        asset_name: tpkg${{ matrix.ext }}
+        asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
