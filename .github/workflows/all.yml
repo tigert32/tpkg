@@ -8,7 +8,18 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            ext: ""
+          - os: macos-latest
+            ext: ""
+          - os: windows-latest
+            ext: ".exe"
+
     steps:
     - uses: actions/checkout@v4
 
@@ -21,7 +32,7 @@ jobs:
       working-directory: ./tpkg
       run: |
         go mod tidy
-        go build -v -o bin/tpkg ./cmd
+        go build -v -o bin/tpkg${{ matrix.ext }} ./cmd
 
     - name: Get current date
       id: get_date
@@ -42,6 +53,7 @@ jobs:
 
     - name: Create Release
       id: create_release
+      if: ${{ matrix.os == 'ubuntu-latest' }}
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,8 +69,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./tpkg/bin/tpkg
-        asset_name: tpkg
+        asset_path: ./tpkg/bin/tpkg${{ matrix.ext }}
+        asset_name: tpkg${{ matrix.ext }}
         asset_content_type: application/octet-stream
 
     - name: Test
