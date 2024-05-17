@@ -29,15 +29,16 @@ jobs:
 
     - name: Tag the release
       if: github.ref == 'refs/heads/master'
+      id: tag_release
       run: |
         TAG_NAME="v${{ env.CURRENT_DATE }}"
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
         git tag $TAG_NAME
         git push origin $TAG_NAME
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      id: tag_release
 
     - name: Create Release
       id: create_release
@@ -45,8 +46,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.tag_release.outputs.TAG_NAME }}
-        release_name: Release ${{ steps.tag_release.outputs.TAG_NAME }}
+        tag_name: ${{ env.TAG_NAME }}
+        release_name: Release ${{ env.TAG_NAME }}
         draft: false
         prerelease: false
 
