@@ -49,21 +49,25 @@ jobs:
       with:
         tag_name: ${{ env.TAG_NAME }}
         name: "Release ${{ env.TAG_NAME }}"
-        files: ./tpkg/bin/tpkg${{ matrix.ext }}
+        draft: false
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release Asset (Linux)
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: |
-        gh release upload ${{ env.TAG_NAME }} ./tpkg/bin/tpkg${{ matrix.ext }} --clobber
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        files: ./tpkg/bin/tpkg${{ matrix.ext }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release Asset (macOS)
       if: ${{ matrix.os == 'macos-latest' }}
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.TAG_NAME }}
-        name: "Release ${{ env.TAG_NAME }}"
         files: ./tpkg/bin/tpkg${{ matrix.ext }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,7 +77,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.TAG_NAME }}
-        name: "Release ${{ env.TAG_NAME }}"
         files: ./tpkg/bin/tpkg${{ matrix.ext }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
