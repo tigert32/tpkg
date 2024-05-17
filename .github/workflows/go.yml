@@ -23,16 +23,21 @@ jobs:
         go mod tidy
         go build -v -o bin/tpkg ./cmd
 
+    - name: Get current date
+      id: get_date
+      run: echo "CURRENT_DATE=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
     - name: Tag the release
       if: github.ref == 'refs/heads/master'
       run: |
-        TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
+        TAG_NAME="v${{ env.CURRENT_DATE }}"
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
         git tag $TAG_NAME
         git push origin $TAG_NAME
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      id: tag_release
 
     - name: Create Release
       id: create_release
@@ -40,8 +45,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.tag_the_release.outputs.TAG_NAME }}
-        release_name: Release ${{ steps.tag_the_release.outputs.TAG_NAME }}
+        tag_name: ${{ steps.tag_release.outputs.TAG_NAME }}
+        release_name: Release ${{ steps.tag_release.outputs.TAG_NAME }}
         draft: false
         prerelease: false
 
