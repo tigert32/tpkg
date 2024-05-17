@@ -15,10 +15,13 @@ jobs:
         include:
           - os: ubuntu-latest
             ext: ""
+            suffix: "linux-x64"
           - os: macos-latest
             ext: ""
+            suffix: "macos-x64"
           - os: windows-latest
             ext: ".exe"
+            suffix: "windows-x64"
 
     steps:
     - uses: actions/checkout@v4
@@ -32,7 +35,7 @@ jobs:
       working-directory: ./tpkg
       run: |
         go mod tidy
-        go build -v -o bin/tpkg${{ matrix.ext }} ./cmd
+        go build -v -o bin/tpkg-${{ matrix.suffix }}${{ matrix.ext }} ./cmd
 
     - name: Get current date
       id: get_date
@@ -61,8 +64,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./tpkg/bin/tpkg${{ matrix.ext }}
-        asset_name: tpkg${{ matrix.ext }}
+        asset_path: ./tpkg/bin/tpkg-${{ matrix.suffix }}${{ matrix.ext }}
+        asset_name: tpkg-${{ matrix.suffix }}${{ matrix.ext }}
         asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,8 +75,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ needs.build.outputs.create_release.outputs.upload_url }}
-        asset_path: ./tpkg/bin/tpkg${{ matrix.ext }}
-        asset_name: tpkg${{ matrix.ext }}
+        asset_path: ./tpkg/bin/tpkg-${{ matrix.suffix }}${{ matrix.ext }}
+        asset_name: tpkg-${{ matrix.suffix }}${{ matrix.ext }}
         asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -83,8 +86,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ needs.build.outputs.create_release.outputs.upload_url }}
-        asset_path: ./tpkg/bin/tpkg${{ matrix.ext }}
-        asset_name: tpkg${{ matrix.ext }}
+        asset_path: ./tpkg/bin/tpkg-${{ matrix.suffix }}${{ matrix.ext }}
+        asset_name: tpkg-${{ matrix.suffix }}${{ matrix.ext }}
         asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
